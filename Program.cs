@@ -44,6 +44,10 @@ public partial class Crawler
     {
         // Your code here
         // Note: you need this step for recursive operation
+        if (level <= 0) { //Base case for the deepest level
+            return; 
+        }
+
         if (basedFolder == null)
         {
             throw new Exception("Please set the value of base folder using SetBasedFolder method first.");
@@ -78,6 +82,7 @@ public partial class Crawler
                     {
                         // Your code here
                         // Note: It should be recursive operation here
+                        await GetPage(link, level - 1); 
 
                         // limit number of links in the page, otherwise it will load lots of data
                         if (++count >= maxLinksPerPage) break;
@@ -126,12 +131,12 @@ public partial class Crawler
 }
 class Program
 {
-    static void Main(string[] args)
+    static async Task Main(string[] args) //more proper async and await handling
     {
         Crawler cw = new();
         // Can you improve this code?
-        cw.SetBasedFolder(".");
+        cw.SetBasedFolder(Path.GetTempPath()); //ensure a reliable temporary foldeer
         cw.SetMaxLinksPerPage(5);
-        cw.GetPage("https://dandadan.net/", 2).Wait();
+        await cw.GetPage("https://dandadan.net/", 2);
     }
 }
